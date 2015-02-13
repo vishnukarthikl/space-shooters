@@ -11,11 +11,28 @@ public class GameController : MonoBehaviour {
 	public float startWait;
 	private int score;
 	public GUIText scoreText;
+	public GUIText gameOverText;
+	public GUIText restartText;
+
+	private bool gameOver;
+	private bool restart;
 
 	void Start () {
 		score = 0;
+		gameOverText.text = "";
+		restartText.text = "";
 		UpdateScore ();
 		StartCoroutine (spawnAsteroids ());
+	}
+
+	void Update () {
+		if (restart)
+		{
+			if (Input.GetKeyDown (KeyCode.R))
+			{
+				Application.LoadLevel (Application.loadedLevel);
+			}
+		}
 	}
 
 	void UpdateScore ()
@@ -26,6 +43,11 @@ public class GameController : MonoBehaviour {
 	public void AddNewScore(int newScore){
 		score += newScore;
 		UpdateScore ();
+	}
+
+	public void GameOver() {
+		gameOver = true;
+		gameOverText.text = "Game Over!";
 	}
 
 	IEnumerator spawnAsteroids ()
@@ -40,6 +62,12 @@ public class GameController : MonoBehaviour {
 				yield return new WaitForSeconds(spawnWait);
 			}
 			yield return new WaitForSeconds (waveWait);
+
+			if (gameOver) {
+				restartText.text = "Press 'R' for Restart";
+				restart = true;
+				break;
+			}
 		}
 	}
 
